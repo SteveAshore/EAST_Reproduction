@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# 激活 conda 环境
-# source activate seal
-
 # 清理残留显存
 python -c "import torch; torch.cuda.empty_cache()"
 

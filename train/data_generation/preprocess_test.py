@@ -4,32 +4,43 @@ import numpy as np
 from util import *
 import json
 
-# 1. Use data generation pipeline to generate data (https://github.com/QwenLM/Qwen2.5-Math)
-# 2. Use this script to preprocess the data, you will have
-#  a pair file, with each question having a chosen(positive) and rejected(negative) response
-#  a metrics file, which contains the metrics of the data 
-#  a extended metrics file, which contains the metrics of the data with different weight coefficients
+# Data Processing Pipeline:
+# 1. Generate initial dataset using Qwen2.5-Math pipeline (https://github.com/QwenLM/Qwen2.5-Math)
+# 2. Execute this preprocessing script to produce:
+#    - Paired data file: Contains question pairs with preferred (positive) and non-preferred (negative) responses
+#    - Metrics file: Contains core statistical metrics of the dataset
+#    - Extended metrics file: Contains metrics with various weighting coefficients for analysis
 
-#tips: for pair file, I did some cleaning to make sure both chosen and rejected pairs contain correct format("box{}"). there are some cleaning checks in the code and you may add more to ensure the resulting training data quality. 
-#tips: for pair file, you can do a manual check to see if negative answer is incorrect (sometimes it contain correct answer but the evaluation pipeline is not able to detect it, which may affect the DPO training)
-file0='Datasets/1b_math_train_qwen25-math-cot_-1_seed0_t0.7_s0_e-1.jsonl'
-file1='Datasets/8b_math_train_qwen25-math-cot_-1_seed0_t0.7_s0_e-1.jsonl'
-file2='Datasets/1B_gsm8k_train_qwen25-math-cot_-1_seed0_t0.7_s0_e-1.jsonl'
-file3='Datasets/8b_gsm8k_train_qwen25-math-cot_-1_seed0_t0.7_s0_e-1.jsonl'
+# Implementation Notes:
+# - Data Quality: The script enforces proper formatting (boxed{}) for both preferred and non-preferred responses
+#   Additional validation checks can be implemented to enhance data quality
+# - Quality Assurance: Manual verification of negative responses is recommended, as the evaluation pipeline
+#   may occasionally fail to identify correct answers, potentially impacting DPO training effectiveness
+
+# Evaluation Prompt Template (Llama 3) for evaluation and data generation from the pipeline:
+PROMPT_TEMPLATE_LLAMA = """
+<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+Please reason step by step, and put your final answer within \\boxed{{}}.<|eot_id|>
+<|start_header_id|>user<|end_header_id|>
+{input}<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+{output}
+
+"""
+file0='../Datasets/1b_math_train_qwen25-math-cot_-1_seed0_t0.7_s0_e-1.jsonl'
+# file1=''
+# file2=''
 #your file generated using data generation pipeline, could be a single jsonl file or multiple jsonl files
-output_dir='Datasets/processed/1b_gsm8k.json'
+output_dir='../Datasets/processed/1b_gsm8k_test_new.json'
 
-files = [file2]
+# files = [file0, file1,file2]
+files = [file0]
 new_data = []
 key=['code', 'score', 'report', 'pred']
 # Read and combine responses from all files
 for file_path in files:
     with open(file_path, 'r') as f:
         data = []
-        lines = f.readlines()  # 读取所有行
-        if len(lines) > 1:  # 如果文件有多行，则跳过最后一行
-            lines = lines[:-1]
-        for line in lines:
+        for line in f:
             data.append(json.loads(line.strip()))
         if len(new_data) == 0:
             new_data=data
@@ -48,9 +59,9 @@ with open(output_dir.replace(".json", "_metric.json"), "w") as f:
 
 
 
-a_e={-3:[],-2.5:[],-2:[],-1.5:[],-1.25:[],-1:[],-0.75:[],-0.5:[],0.1:[],0.2:[],0.5:[],0.7:[],1:[],1.5:[],1.75:[],2:[],2.5:[],3:[]}
-a_a_rev={-3:[],-2.5:[],-2:[],-1.5:[],-1.25:[],-1:[],-0.75:[],-0.5:[],0.1:[],0.2:[],0.5:[],0.7:[],1:[],1.5:[],1.75:[],2:[],2.5:[],3:[]}
-a_r={-3:[],-2.5:[],-2:[],-1.5:[],-1.25:[],-1:[],-0.75:[],-0.5:[],0.1:[],0.2:[],0.5:[],0.7:[],1:[],1.5:[],1.75:[],2:[],2.5:[],3:[]}
+a_e={0.1:[],0.2:[],0.5:[],0.7:[],1:[],1.5:[],2:[],2.5:[],3:[]}
+a_a_rev={0.1:[],0.2:[],0.5:[],0.7:[],1:[],1.5:[],2:[],2.5:[],3:[]}
+a_r={0.1:[],0.2:[],0.5:[],0.7:[],1:[],1.5:[],2:[],2.5:[],3:[]}
 
 content1 = new_data_pair
 content2 = metrics

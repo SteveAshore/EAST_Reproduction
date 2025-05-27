@@ -12,14 +12,14 @@ import json
 
 #tips: for pair file, I did some cleaning to make sure both chosen and rejected pairs contain correct format("box{}"). there are some cleaning checks in the code and you may add more to ensure the resulting training data quality. 
 #tips: for pair file, you can do a manual check to see if negative answer is incorrect (sometimes it contain correct answer but the evaluation pipeline is not able to detect it, which may affect the DPO training)
-file0='Datasets/1b_math_train_qwen25-math-cot_-1_seed0_t0.7_s0_e-1.jsonl'
-file1='Datasets/8b_math_train_qwen25-math-cot_-1_seed0_t0.7_s0_e-1.jsonl'
-file2='Datasets/1B_gsm8k_train_qwen25-math-cot_-1_seed0_t0.7_s0_e-1.jsonl'
-file3='Datasets/8b_gsm8k_train_qwen25-math-cot_-1_seed0_t0.7_s0_e-1.jsonl'
+file0='../Datasets/1b_math_train_qwen25-math-cot_-1_seed0_t0.7_s0_e-1.jsonl'
+file1='../Datasets/8b_math_train_qwen25-math-cot_-1_seed0_t0.7_s0_e-1.jsonl'
+file2='../Datasets/1B_gsm8k_train_qwen25-math-cot_-1_seed0_t0.7_s0_e-1.jsonl'
+file3='../Datasets/8b_gsm8k_train_qwen25-math-cot_-1_seed0_t0.7_s0_e-1.jsonl'
 #your file generated using data generation pipeline, could be a single jsonl file or multiple jsonl files
-output_dir='Datasets/processed/1b_gsm8k.json'
+output_dir='../Datasets/processed/1b_gsm8k_new.json'
 
-files = [file2]
+files = [file0]
 new_data = []
 key=['code', 'score', 'report', 'pred']
 # Read and combine responses from all files

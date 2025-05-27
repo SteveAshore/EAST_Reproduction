@@ -6,3 +6,12 @@ outputs/model
 id_rsa_repro
 id_rsa_repro.pub
 *.jsonl
+
+# Python files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
