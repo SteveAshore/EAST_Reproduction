@@ -2,3 +2,7 @@ datasets/
 Meta-Llama-3.2-1B-Instruct/
 model/
 wandb/
+outputs/model
+id_rsa_repro
+id_rsa_repro.pub
+*.jsonl
